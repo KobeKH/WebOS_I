@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inlogscherm</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .loading-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fff;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            flex-direction: column;
+        }
+        .loading-screen img {
+            width: 150px;
+            height: auto;
+        }
+        .loading-circle {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #3498db;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            margin-top: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .login-container {
+            display: none;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .login-container h2 {
+            margin-bottom: 20px;
+        }
+        .login-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .login-container button:hover {
+            background-color: #0056b3;
+        }
+        .file-buttons {
+            margin-top: 20px;
+        }
+        .file-buttons button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .file-buttons button:hover {
+            background-color: #218838;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            height: 90%;
+            position: relative;
+        }
+        .close, .fullscreen {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        .close:hover, .fullscreen:hover {
+            color: black;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-screen" id="loadingScreen">
+        <img src="1.png" alt="Logo">
+        <div class="loading-circle"></div>
+    </div>
+
+    <div class="login-container" id="loginContainer">
+        <h2>Inloggen</h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Gebruikersnaam" required>
+            <input type="password" id="password" placeholder="Wachtwoord" required>
+            <button type="submit">Inloggen</button>
+        </form>
+        <div id="message"></div>
+        <div class="file-buttons" id="fileButtons" style="display: none;">
+            <button onclick="openModal('prik(2).html')">Open prik(2).html</button>
+            <button onclick="openModal('nieuws.html')">Open nieuws.html</button>
+            <button onclick="openModal('vlag.png')">Open vlag.png</button>
+            <button onclick="openModal('update.html')">Open updates</button>
+        </div>
+    </div>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content" id="modalContent">
+            <span class="close" onclick="closeModal()">×</span>
+            <span class="fullscreen" onclick="toggleFullscreen()">⛶</span>
+            <iframe id="modalIframe" src=""></iframe>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal">
+        <div class="modal-content" id="settingsContent">
+            <span class="close" onclick="closeSettings()">×</span>
+            <h2>Gebruikers toevoegen</h2>
+            <form id="addUserForm">
+                <input type="text" id="newUsername" placeholder="Nieuwe gebruikersnaam" required>
+                <input type="password" id="newPassword" placeholder="Nieuw wachtwoord" required>
+                <button type="submit">Toevoegen</button>
+            </form>
+            <div id="settingsMessage"></div>
+        </div>
+    </div>
+
+    <script>
+        let users = {
+            "Kobe Van Houtte": "KoLeDa2013",
+            "Saar Tahon": "ewel",
+            "Haily Marsham": "ewel",
+            "Amy Kirkby": "ewel"
+        };
+
+        // Simulate loading screen
+        setTimeout(() => {
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('loginContainer').style.display = 'block';
+            alert('Druk op ok om door te gaan.');
+        }, 3000);
+
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const message = document.getElementById('message');
+            const fileButtons = document.getElementById('fileButtons');
+
+            if (users[username] && users[username] === password) {
+                message.textContent = 'Inloggen succesvol!';
+                message.style.color = 'green';
+                fileButtons.style.display = 'block';
+            } else {
+                message.textContent = 'Ongeldige gebruikersnaam of wachtwoord.';
+                message.style.color = 'red';
+                fileButtons.style.display = 'none';
+            }
+        });
+
+        function openModal(file) {
+            document.getElementById('modalIframe').src = file;
+            document.getElementById('myModal').style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById('myModal').style.display = "none";
+        }
+
+        function toggleFullscreen() {
+            const iframe = document.getElementById('modalIframe');
+            if (iframe.requestFullscreen) {
+                iframe.requestFullscreen();
+            } else if (iframe.mozRequestFullScreen) { /* Firefox */
+                iframe.mozRequestFullScreen();
+            } else if (iframe.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+                iframe.webkitRequestFullscreen();
+            } else if (iframe.msRequestFullscreen) { /* IE/Edge */
+                iframe.msRequestFullscreen();
+            }
+        }
+
+        function openSettings() {
+            document.getElementById('settingsModal').style.display = "block";
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').style.display = "none";
+        }
+
+        document.getElementById('addUserForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const newUsername = document.getElementById('newUsername').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const settingsMessage = document.getElementById('settingsMessage');
+
+            if (newUsername && newPassword) {
+                users[newUsername] = newPassword;
+                settingsMessage.textContent = 'Gebruiker succesvol toegevoegd!';
+                settingsMessage.style.color = 'green';
+                document.getElementById('newUsername').value = '';
+                document.getElementById('newPassword').value = '';
+            } else {
+                settingsMessage.textContent = 'Vul alle velden in.';
+                settingsMessage.style.color = 'red';
+            }
+        });
+    </script>
+</body>
+</html>

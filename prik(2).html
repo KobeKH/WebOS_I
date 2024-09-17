@@ -1,0 +1,38 @@
+<html>
+<body style="background-color:#32CD32">
+  <img id ="ballon" onmouseup="popped(event)" src="ballon.png" style="position:absolute;width:100px; top:500px; left:500px;">
+  <p id="scoreText" style="color:yellow; font-size:20px; font-family:Arial">Score:0</p>
+</body>
+<script type="text/javascript">
+alert ('Copyright KH')
+ var score=0, speed=1;
+ function setLeft(id,x){document.getElementById(id).style.left=x+"px";}
+ function setTop(id,y){document.getElementById(id).style.top=y+"px";}
+ function getLeft(id){return document.getElementById(id).offsetLeft;}
+ function getTop(id){return document.getElementById(id).offsetTop;}
+ function RandomNumber(low,high){return(Math.floor(low+Math.random()*(1+high-low)));}
+ var gameTimer=window.setInterval(floatUp,25);
+function floatUp(){
+  var y=getTop("ballon");
+  if(y<-100){
+    gameOver();
+  }
+  setTop("ballon",y-speed);
+ }
+function popped(event){
+  event.preventDefault();
+  score++;
+  speed++;
+  document.getElementById("scoreText").innerText="Score: "+score;
+  setLeft("ballon",RandomNumber(0,window.innerWidth-100));
+  setTop("ballon",window.innerHeight);
+ }
+ function gameOver(){
+   clearInterval(gameTimer);
+   alert("Game Over! Jouw totaalscore: "+score);
+   location.reload();
+ }
+</script>
+</html>
+
+
